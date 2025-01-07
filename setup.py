@@ -7,7 +7,7 @@ with open('README.md') as README_file:
 
 setup(
     name='boxing_gym',
-    version='0.1.4',
+    version='0.1.5',
     description='An Mike Tyson\'s Punch Out!! Gymnasium Environment',
     long_description=README,
     long_description_content_type='text/markdown',

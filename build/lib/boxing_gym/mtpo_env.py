@@ -153,7 +153,7 @@ class PunchOutEnv(NESEnv):
     def skip_between_rounds(self) -> None:
         ''' If agent is not in fight then spam start until the next round begins.'''
         while (not self._in_fight) or self._time == self._time_last or self._time == 0:
-            self.ram[0x0001] = self.first_fight
+            if not self._has_backup: self.ram[0x0001] = self.first_fight
 
             self._frame_advance(0)
             self._frame_advance(0)
