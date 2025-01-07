@@ -4,7 +4,7 @@ from .MTPOPreprocessing import MTPOPreprocessingCustom
 import gymnasium as gym
 import os
 
-def make_env(envs_create:int=1, framestack:int=4, headless:bool=False) -> gym.vector.AsyncVectorEnv:
+def make_env(envs_create:int=1, framestack:int=4, headless:bool=False, fps_limit:int=-1) -> gym.vector.AsyncVectorEnv:
     '''
     Create a vectorised MTPO environment.
 
@@ -12,6 +12,7 @@ def make_env(envs_create:int=1, framestack:int=4, headless:bool=False) -> gym.ve
         envs_create (int): The number of parallel environments to create. Defaults to 1
         framestack (int): The number of frames which are stacked together to form 1 observation. Defaults to 4
         headless (bool): Whether the environments should be headless, i.e. no window is displayed. Defaults to False
+        fps_limit (int): Integer limit for the fps of the environment. Negative values give unlimited fps. Defaults to -1
 
     Returns:
         gym.vector.AsyncVectorEnv: Vectorised Gym environment.
@@ -25,7 +26,7 @@ def make_env(envs_create:int=1, framestack:int=4, headless:bool=False) -> gym.ve
             id="gymnasium_env/mtpo-v5",
             entry_point=PunchOutEnv,
         )
-        env = MTPOPreprocessingCustom(gym.make("gymnasium_env/mtpo-v5", rom_path=rom, headless=headless, fps_limit=60))
+        env = MTPOPreprocessingCustom(gym.make("gymnasium_env/mtpo-v5", rom_path=rom, headless=headless, fps_limit=fps_limit))
 
         return gym.wrappers.FrameStackObservation(env, stack_size=framestack)
     

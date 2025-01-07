@@ -142,9 +142,12 @@ class PunchOutEnv(NESEnv):
         return 60*self.ram[0x0302] + 10*self.ram[0x0304] + self.ram[0x0305]
 
     def _frame_advance(self, action):
-        start_time = time.time()
-        super()._frame_advance(action)
-        if 1/60 - (time.time() - start_time) > 0: time.sleep(1/60 - (time.time() - start_time))
+        if self.fps_limit > 0:
+            start_time = time.time()
+            super()._frame_advance(action)
+            if 1/self.fps_limit - (time.time() - start_time) > 0: time.sleep(1/self.fps_limit - (time.time() - start_time))
+        else:
+            super()._frame_advance(action)
 
     def skip_between_rounds(self) -> None:
         ''' If agent is not in fight then spam start until the next round begins.'''
