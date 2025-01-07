@@ -1,0 +1,12 @@
+LICENSE.txt
+README.md
+setup.py
+boxing_gym/MTPOPreprocessing.py
+boxing_gym/__init__.py
+boxing_gym/data.bin
+boxing_gym/mtpo_env.py
+boxing_gym.egg-info/PKG-INFO
+boxing_gym.egg-info/SOURCES.txt
+boxing_gym.egg-info/dependency_links.txt
+boxing_gym.egg-info/requires.txt
+boxing_gym.egg-info/top_level.txt
