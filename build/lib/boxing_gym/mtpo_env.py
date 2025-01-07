@@ -52,6 +52,7 @@ class PunchOutEnv(NESEnv):
         super().__init__(rom_path, headless=headless)
 
         self.fps_limit = fps_limit
+        self.reward_range = (-float(30), float(30))
 
         # Define the actions which correspond to: no action, super punch, dodge left, left punch, left uppercut and block.
         self._action_map = [0, NES_INPUT_START, NES_INPUT_LEFT, NES_INPUT_B, NES_INPUT_B | NES_INPUT_UP, NES_INPUT_DOWN]
