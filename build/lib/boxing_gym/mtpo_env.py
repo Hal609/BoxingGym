@@ -228,3 +228,7 @@ class PunchOutEnv(NESEnv):
     def _get_info(self):
         """Return the info after a step occurs"""
         return {}
+    
+    def close(self):
+        if not self.headless: self.nes.close()
+        return super().close()
