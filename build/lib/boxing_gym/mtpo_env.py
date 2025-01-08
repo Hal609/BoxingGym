@@ -86,12 +86,12 @@ class PunchOutEnv(NESEnv):
 
         if not self._in_fight: self.skip_between_rounds()
 
-        # bound the reward in [min, max]
+        # Bound the reward in [min, max]
         if reward < self.reward_range[0]: reward = self.reward_range[0]
         elif reward > self.reward_range[1]: reward = self.reward_range[1]
 
         if self.fps_limit > 0:
-            # Sleep until 1/60th of a second has passed for consistent frame rate
+            # Sleep until the required frame duration has passed for consistent frame rate
             if (1/self.fps_limit - (time.time() - self.last_time)) > 0:
                 time.sleep(1/self.fps_limit - (time.time() - self.last_time))
             self.last_time = time.time()

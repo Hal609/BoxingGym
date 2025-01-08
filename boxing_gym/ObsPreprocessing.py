@@ -1,20 +1,18 @@
+import cv2
 import numpy as np
 import gymnasium as gym
 from gymnasium.core import WrapperActType, WrapperObsType
 from gymnasium.spaces import Box
 from typing import Any, SupportsFloat
 
-import cv2  # Required for resizing frames
 
-class MTPOPreprocessingCustom(gym.Wrapper, gym.utils.RecordConstructorArgs):
-    """Custom preprocessing for Super Mario Bros environments.
+class ObsPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
+    """Preprocessing for Punch Out environment.
 
     Includes preprocessing steps such as:
     - Frame skipping
     - Grayscale conversion
     - Resizing frames
-    - Terminal signal on life loss
-    - Lost life information
     """
 
     def __init__(
@@ -22,20 +20,16 @@ class MTPOPreprocessingCustom(gym.Wrapper, gym.utils.RecordConstructorArgs):
         env: gym.Env,
         frame_skip: int = 4,
         screen_size: int = 84,
-        terminal_on_life_loss: bool = False,
-        life_information: bool = True,
         grayscale_obs: bool = True,
         grayscale_newaxis: bool = False,
         scale_obs: bool = False,
     ):
-        """Initialize MarioPreprocessingCustom wrapper.
+        """Initialize MarioPreprocessing wrapper.
 
         Args:
             env (gym.Env): The base environment to wrap.
             frame_skip (int): The number of frames to skip between observations.
             screen_size (int): The size to which frames are resized.
-            terminal_on_life_loss (bool): Whether to end an episode when a life is lost.
-            life_information (bool): Whether to include life loss information in `info`.
             grayscale_obs (bool): Whether to convert frames to grayscale.
             grayscale_newaxis (bool): Add a channel axis to grayscale frames.
             scale_obs (bool): Normalize observation values to [0, 1].
@@ -44,8 +38,6 @@ class MTPOPreprocessingCustom(gym.Wrapper, gym.utils.RecordConstructorArgs):
             self,
             frame_skip=frame_skip,
             screen_size=screen_size,
-            terminal_on_life_loss=terminal_on_life_loss,
-            life_information=life_information,
             grayscale_obs=grayscale_obs,
             grayscale_newaxis=grayscale_newaxis,
             scale_obs=scale_obs,
@@ -54,8 +46,6 @@ class MTPOPreprocessingCustom(gym.Wrapper, gym.utils.RecordConstructorArgs):
 
         self.frame_skip = frame_skip
         self.screen_size = screen_size
-        self.terminal_on_life_loss = terminal_on_life_loss
-        self.life_information = life_information
         self.grayscale_obs = grayscale_obs
         self.grayscale_newaxis = grayscale_newaxis
         self.scale_obs = scale_obs
@@ -97,11 +87,6 @@ class MTPOPreprocessingCustom(gym.Wrapper, gym.utils.RecordConstructorArgs):
             obs, reward, terminated, truncated, info = self.env.step(action)
             total_reward += reward
             last_obs = obs  # Save the last valid observation
-
-            if self.terminal_on_life_loss:
-                new_lives = info.get("lives", self.lives)
-                terminated = terminated or new_lives < self.lives
-                self.lives = new_lives
 
             if terminated or truncated:
                 break

@@ -1,6 +1,6 @@
 """Registration code of Gym environments in this package."""
 from .mtpo_env import PunchOutEnv
-from .MTPOPreprocessing import MTPOPreprocessingCustom
+from .ObsPreprocessing import ObsPreprocessing
 import gymnasium as gym
 import os
 
@@ -26,7 +26,7 @@ def make_env(envs_create:int=1, framestack:int=4, headless:bool=False, fps_limit
             id="gymnasium_env/mtpo-v5",
             entry_point=PunchOutEnv,
         )
-        env = MTPOPreprocessingCustom(gym.make("gymnasium_env/mtpo-v5", rom_path=rom, headless=headless, fps_limit=fps_limit))
+        env = ObsPreprocessing(gym.make("gymnasium_env/mtpo-v5", rom_path=rom, headless=headless, fps_limit=fps_limit))
 
         return gym.wrappers.FrameStackObservation(env, stack_size=framestack)
     

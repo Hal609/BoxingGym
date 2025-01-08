@@ -1,7 +1,7 @@
 LICENSE.txt
 README.md
 setup.py
-boxing_gym/MTPOPreprocessing.py
+boxing_gym/ObsPreprocessing.py
 boxing_gym/__init__.py
 boxing_gym/data.bin
 boxing_gym/mtpo_env.py
