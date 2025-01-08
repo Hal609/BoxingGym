@@ -69,9 +69,8 @@ class ObsPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
         _shape = (screen_size, screen_size, 1 if grayscale_obs else 3)
         if grayscale_obs and not grayscale_newaxis:
             _shape = _shape[:-1]  # Remove channel axis
+            
         self.observation_space = Box(low=_low, high=_high, shape=_shape, dtype=_obs_dtype)
-
-        self.lives = 0
 
     def step(
         self, action: WrapperActType
@@ -102,13 +101,12 @@ class ObsPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
                 self.obs_buffer[1] = last_obs  # Fill missing frames with the last valid observation
                 self.obs_buffer[0] = last_obs
 
-
         return self._get_obs(), total_reward, terminated, truncated, info
 
     def reset(self, **kwargs) -> tuple[WrapperObsType, dict[str, Any]]:
         """Reset the environment with preprocessing."""
         obs, info = self.env.reset(**kwargs)
-        self.lives = info.get("lives", 0)
+
         if self.grayscale_obs:
             obs = cv2.cvtColor(obs, cv2.COLOR_RGB2GRAY)
         self.obs_buffer[0].fill(0)  # Clear the second frame buffer

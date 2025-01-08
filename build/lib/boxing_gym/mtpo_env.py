@@ -69,6 +69,9 @@ class PunchOutEnv(NESEnv):
         self._opp_id_last = 0
         self.was_hit = False
         self.last_time = time.time()
+
+    def shuffle_rng(self):
+        self.ram[0x0018] = random.getrandbits(8)
     
     def step(self, action: int):
         ''' Advances one frame of gameplay with a given action. '''
@@ -214,6 +217,7 @@ class PunchOutEnv(NESEnv):
 
     def _did_reset(self):
         """Handle any RAM hacking after a reset occurs."""
+        self.shuffle_rng()
         self._time_last = self._time
         self._mac_hp_last = self._mac_health
         self._opp_down_count_last = self._opp_down_count
