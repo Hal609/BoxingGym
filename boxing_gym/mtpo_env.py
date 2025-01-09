@@ -67,6 +67,7 @@ class PunchOutEnv(NESEnv):
         self._opp_down_count_last = 0
         self._opp_hp_last = 0
         self._opp_id_last = 0
+        self._furthest_opp = 0 # Store the index of the highest opponent reached
         self.was_hit = False
         self.last_time = time.time()
 
@@ -74,9 +75,13 @@ class PunchOutEnv(NESEnv):
         self.ram[0x0018] = random.getrandbits(8)
     
     def step(self, action: int):
-        ''' Advances one frame of gameplay with a given action. '''
+        ''' Transition function: advances one frame of gameplay with a given action. 
+        '''
+
         if self.done: raise ValueError('Cannot step in a done environment! Call `reset` first.')
         
+        if self._opp_id > self._furthest_opp: self._furthest_opp = self._opp_id
+
         # If match has started and no save exists, make one
         if self._time != 0 and not self._has_backup:
             self._backup()
@@ -168,56 +173,60 @@ class PunchOutEnv(NESEnv):
 
     @property
     def _health_penalty(self) -> np.uint8:
-        """Return the change in Mac's health (a negative value when hp is lost)."""
-        _reward = self._mac_health - self._mac_hp_last
+        """Return the absolute change in Mac's health."""
+        _reward = abs(self._mac_health - self._mac_hp_last)
         self.was_hit = (_reward != 0)
         self._mac_hp_last = self._mac_health
-        return _reward
+
+        return np.uint8(_reward)
     
     @property
     def _hit_reward(self) -> np.uint8:
         """Return how much hp the opponent lost in the last frame (positive when opponent loses hp)."""
         _reward = self._opp_hp_last - self._opp_health
         self._opp_hp_last = self._opp_health
-        return _reward
+
+        return np.uint8(_reward)
     
     @property
     def _ko_reward(self) -> np.uint8:
         """Return a reward if the opponent is knocked down."""
         _reward = self._opp_down_count != self._opp_down_count_last
         self._opp_down_count_last = self._opp_down_count
-        return int(_reward)
+
+        return np.uint8(_reward)
     
     @property
     def _next_opp_reward(self) -> np.uint8:
         """Return the reward for advancing to the next opponent."""
         _reward =  self._opp_id > self._opp_id_last
         self._opp_id_last = self._opp_id
-        return _reward
+        return np.uint8(_reward)
 
     @property
     def _time_penalty(self) -> np.uint8:
-        """Return the penalty for the in-game clock ticking."""
+        """Return the absolute of the decrease the in-game clock ticking."""
         _reward = self._time_last - self._time
         self._time_last = self._time
 
-        # time can only decrease, a positive reward results from a reset and should default to 0
+        # Time can only increase, a positive reward results from a reset and is therefore set to 0
         if _reward > 0: return 0
 
-        return _reward
+        return np.uint8(abs(_reward))
 
     def _will_reset(self):
-        """Handle and RAM hacking before a reset occurs."""
+        """Reset variables just before reset."""
         self._time_last = 0
         self._mac_hp_last = 0
         self._opp_down_count_last = 0
         self._opp_hp_last = 0
         self._opp_id_last = 0
-        self.ram[0x0001] = random.randint(0,5)
+        self._furthest_opp = 0
 
     def _did_reset(self):
-        """Handle any RAM hacking after a reset occurs."""
+        """Handle RAM hacking and initialise variables after reset."""
         self.shuffle_rng()
+
         self._time_last = self._time
         self._mac_hp_last = self._mac_health
         self._opp_down_count_last = self._opp_down_count
@@ -226,17 +235,14 @@ class PunchOutEnv(NESEnv):
 
     def get_reward(self) -> float:
         """Return the reward after a step occurs."""
-        return (15*self._next_opp_reward) + (self._time_penalty)*0.1 + (2*self._ko_reward) + self._hit_reward + self._health_penalty
+        return (15*self._next_opp_reward) + (2*self._ko_reward) + self._hit_reward - self._health_penalty - (self._time_penalty)*0.1
 
     def _get_done(self):
         """Return True if the episode is over, False otherwise."""
-        # return self._mac_down_count > 0 or self._round > 1
-        return self.was_hit
+        # return self._mac_down_count > 0 or self._round > 1 # Stop if knocked down or round ended
+        # return (self._opp_id < self._furthest_opp) # Stop if the agent loses a title bout
+        return self.was_hit # Stop if agent gets hit
 
     def _get_info(self):
-        """Return the info after a step occurs"""
+        """Return the info after a step occurs. Required for gymnasium but not needed here."""
         return {}
-    
-    def close(self):
-        if not self.headless: self.nes.close()
-        return super().close()
