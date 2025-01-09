@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: boxing_gym
-Version: 0.1.11
+Version: 0.1.13
 Summary: An Mike Tyson's Punch Out!! Gymnasium Environment
 Home-page: https://github.com/Hal609/BoxingGym
 Author: Hal Kolb
@@ -32,7 +32,7 @@ License-File: LICENSE.txt
 Requires-Dist: numpy>=1.18.5
 Requires-Dist: gymnasium>=1.0.0
 Requires-Dist: opencv-python>=4.10.0.84
-Requires-Dist: gymnesium>=0.1.1
+Requires-Dist: gymnesium>=0.1.6
 
 # Boxing Gym
 
