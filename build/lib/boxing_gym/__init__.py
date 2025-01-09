@@ -4,7 +4,7 @@ from .ObsPreprocessing import ObsPreprocessing
 import gymnasium as gym
 import os
 
-def make_env(envs_create:int=1, framestack:int=4, headless:bool=False, fps_limit:int=-1) -> gym.vector.AsyncVectorEnv:
+def make_env(envs_create:int=1, framestack:int=4, headless:bool=False, fps_limit:int=-1, use_class=PunchOutEnv) -> gym.vector.AsyncVectorEnv:
     '''
     Create a vectorised MTPO environment.
 
@@ -24,7 +24,7 @@ def make_env(envs_create:int=1, framestack:int=4, headless:bool=False, fps_limit
     def create_env():
         gym.register(
             id="gymnasium_env/mtpo-v5",
-            entry_point=PunchOutEnv,
+            entry_point=use_class,
         )
         env = ObsPreprocessing(gym.make("gymnasium_env/mtpo-v5", rom_path=rom, headless=headless, fps_limit=fps_limit))
 
@@ -36,4 +36,5 @@ def make_env(envs_create:int=1, framestack:int=4, headless:bool=False, fps_limit
     )
 
 # define the outward facing API of this package
-__all__ = [make_env.__name__]
+__all__ = [make_env.__name__,
+           PunchOutEnv.__name__]

@@ -63,7 +63,6 @@ class ObsPreprocessing(gym.Wrapper, gym.utils.RecordConstructorArgs):
                 np.empty(self.env.observation_space.shape, dtype=np.uint8),
             ]
 
-
         # Reshaped observation space
         _low, _high, _obs_dtype = (0, 255, np.uint8) if not scale_obs else (0, 1, np.float32)
         _shape = (screen_size, screen_size, 1 if grayscale_obs else 3)
