@@ -110,37 +110,37 @@ class PunchOutEnv(NESEnv):
     # == RAM VALUES ==
     
     @property
-    def _in_fight(self) -> np.uint8:
+    def _in_fight(self) :
         '''Return the current round number.'''
         return self.ram[0x0004] == 0xFF
     
     @property
-    def _round(self) -> np.uint8:
+    def _round(self) :
         '''Return the current round number.'''
         return self.ram[0x0006]
     
     @property
-    def _opp_id(self) -> np.uint8:
+    def _opp_id(self) :
         '''Return the current fight id.'''
         return self.ram[0x0001]
     
     @property
-    def _mac_health(self) -> np.uint8:
+    def _mac_health(self) :
         '''Return the Mac's current HP'''
         return self.ram[0x0391]
 
     @property
-    def _opp_health(self) -> np.uint8:
+    def _opp_health(self) :
         '''Return the opponant's current HP'''
         return self.ram[0x0398]
     
     @property
-    def _mac_down_count(self) -> np.uint8:
+    def _mac_down_count(self) :
         '''Return the number of times Mac has been knocked down'''
         return self.ram[0x03D0]
     
     @property
-    def _opp_down_count(self) -> np.uint8:
+    def _opp_down_count(self) :
         '''Return the number of times opponant has been knocked down'''
         return self.ram[0x03D1]
 
@@ -172,39 +172,39 @@ class PunchOutEnv(NESEnv):
     # == REWARD ==
 
     @property
-    def _health_penalty(self) -> np.uint8:
+    def _health_penalty(self) :
         """Return the absolute change in Mac's health."""
         _reward = abs(self._mac_health - self._mac_hp_last)
         self.was_hit = (_reward != 0)
         self._mac_hp_last = self._mac_health
 
-        return np.uint8(_reward)
+        return (_reward)
     
     @property
-    def _hit_reward(self) -> np.uint8:
+    def _hit_reward(self) :
         """Return how much hp the opponent lost in the last frame (positive when opponent loses hp)."""
         _reward = self._opp_hp_last - self._opp_health
         self._opp_hp_last = self._opp_health
 
-        return np.uint8(_reward)
+        return (_reward)
     
     @property
-    def _ko_reward(self) -> np.uint8:
+    def _ko_reward(self) :
         """Return a reward if the opponent is knocked down."""
         _reward = self._opp_down_count != self._opp_down_count_last
         self._opp_down_count_last = self._opp_down_count
 
-        return np.uint8(_reward)
+        return (_reward)
     
     @property
-    def _next_opp_reward(self) -> np.uint8:
+    def _next_opp_reward(self) :
         """Return the reward for advancing to the next opponent."""
         _reward =  self._opp_id > self._opp_id_last
         self._opp_id_last = self._opp_id
-        return np.uint8(_reward)
+        return (_reward)
 
     @property
-    def _time_penalty(self) -> np.uint8:
+    def _time_penalty(self) :
         """Return the absolute of the decrease the in-game clock ticking."""
         _reward = self._time_last - self._time
         self._time_last = self._time
@@ -212,7 +212,7 @@ class PunchOutEnv(NESEnv):
         # Time can only increase, a positive reward results from a reset and is therefore set to 0
         if _reward > 0: return 0
 
-        return np.uint8(abs(_reward))
+        return (abs(_reward))
 
     def _will_reset(self):
         """Reset variables just before reset."""

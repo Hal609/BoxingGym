@@ -7,7 +7,7 @@ with open('README.md') as README_file:
 
 setup(
     name='boxing_gym',
-    version='0.1.13',
+    version='0.1.15',
     description='An Mike Tyson\'s Punch Out!! Gymnasium Environment',
     long_description=README,
     long_description_content_type='text/markdown',
@@ -43,6 +43,6 @@ setup(
         "numpy>=1.18.5",
         "gymnasium>=1.0.0",
         "opencv-python>=4.10.0.84",
-        "gymnesium>=0.1.6"
+        "gymnesium>=0.1.7"
     ],
 )
